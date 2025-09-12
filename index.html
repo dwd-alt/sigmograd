@@ -426,21 +426,11 @@
                                 <div class="candidate-platform">
                                     <h4>Обещания и планы:</h4>
                                     <ul>
-                                        <li>Развитие инфраструктуры: построю новые удобные места для отдыха и развлечений, улучшу дороги и общественные здания.
-Безопасность: организую активное сотрудничество с полицией и службами безопасности для снижения преступности.
-Поддержка игроков: сделаю так, чтобы каждому жителю города было комфортно и интересно — буду слушать ваши предложения и решать проблемы.
-Экономика города: способствовать развитию торговли, создать игровые мероприятия и акции, чтобы увеличить доходы горожан.
-Чистота и порядок: следить, чтобы город был чистым и ухоженным.
-Почему я:
-
-Я готов вкладывать время и силы, чтобы сделать наш город лучшим. Вместе мы сможем сделать его процветающим и уютным для всех.
-
-Призыв к голосованию:
-
-Поддержите меня на выборах! Ваш голос — это шанс изменить наш город к лучшему.
-
-Спасибо за внимание!</li>
-
+                                        <li>Развитие инфраструктуры: построю новые удобные места для отдыха и развлечений, улучшу дороги и общественные здания.</li>
+                                        <li>Безопасность: организую активное сотрудничество с полицией и службами безопасности для снижения преступности.</li>
+                                        <li>Поддержка игроков: сделаю так, чтобы каждому жителю города было комфортно и интересно — буду слушать ваши предложения и решать проблемы.</li>
+                                        <li>Экономика города: способствовать развитию торговли, создать игровые мероприятия и акции, чтобы увеличить доходы горожан.</li>
+                                        <li>Чистота и порядок: следить, чтобы город был чистым и ухоженным.</li>
                                     </ul>
                                 </div>
 
@@ -482,7 +472,7 @@
                             <div class="progress-bar">
                                 <div class="progress-fill" id="progress-candidate1" style="width: 50%;"></div>
                             </div>
-                            <p>Александр Великий: <span id="percent-candidate1">50%</span></p>
+                            <p>M1cyy_1337: <span id="percent-candidate1">50%</span></p>
 
                             <div class="progress-bar">
                                 <div class="progress-fill" id="progress-candidate2" style="width: 50%;"></div>
@@ -684,11 +674,25 @@
 
         // Данные для голосования
         let electionData = {
-            candidate1: { votes: 0, name: "Александр Великий" },
+            candidate1: { votes: 0, name: "M1cyy_1337" },
             candidate2: { votes: 0, name: "Елена Прекрасная" },
             totalVotes: 0,
-            votedPlayers: JSON.parse(localStorage.getItem('votedPlayers')) || []
+            votedPlayers: []
         };
+
+        // Загрузка данных голосования из localStorage
+        function loadElectionData() {
+            const savedData = localStorage.getItem('electionData');
+            if (savedData) {
+                electionData = JSON.parse(savedData);
+            }
+            updateElectionResults();
+        }
+
+        // Сохранение данных голосования в localStorage
+        function saveElectionData() {
+            localStorage.setItem('electionData', JSON.stringify(electionData));
+        }
 
         // Функция голосования
         function vote(candidateNumber) {
@@ -717,10 +721,9 @@
 
             // Добавляем игрока в список проголосовавших
             electionData.votedPlayers.push(playerName);
-            localStorage.setItem('votedPlayers', JSON.stringify(electionData.votedPlayers));
 
             // Сохраняем результаты
-            localStorage.setItem('electionData', JSON.stringify(electionData));
+            saveElectionData();
 
             // Обновляем отображение
             updateElectionResults();
@@ -739,8 +742,8 @@
                 electionData.candidate2.votes + ' голосов';
 
             // Обновляем проценты
-            const percent1 = total > 0 ? Math.round((electionData.candidate1.votes / total) * 100) : 50;
-            const percent2 = total > 0 ? Math.round((electionData.candidate2.votes / total) * 100) : 50;
+            const percent1 = total > 0 ? Math.round((electionData.candidate1.votes / total) * 100) : 0;
+            const percent2 = total > 0 ? Math.round((electionData.candidate2.votes / total) * 100) : 0;
 
             document.getElementById('percent-candidate1').textContent = percent1 + '%';
             document.getElementById('percent-candidate2').textContent = percent2 + '%';
@@ -755,10 +758,19 @@
 
         // Загрузка сохраненных данных при загрузке страницы
         window.addEventListener('load', function() {
-            const savedData = localStorage.getItem('electionData');
-            if (savedData) {
-                electionData = JSON.parse(savedData);
-                updateElectionResults();
+            loadElectionData();
+
+            // Загрузка данных о торговле и заказах
+            const savedTrades = localStorage.getItem('trades');
+            if (savedTrades) {
+                trades = JSON.parse(savedTrades);
+                updateTradeList();
+            }
+
+            const savedOrders = localStorage.getItem('orders');
+            if (savedOrders) {
+                orders = JSON.parse(savedOrders);
+                updateOrderList();
             }
         });
 
@@ -785,6 +797,7 @@
             };
 
             trades.push(trade);
+            localStorage.setItem('trades', JSON.stringify(trades));
             document.getElementById('trade-form').reset();
             updateTradeList();
         }
@@ -822,6 +835,7 @@
         // Функция удаления объявления
         function removeTrade(index) {
             trades.splice(index, 1);
+            localStorage.setItem('trades', JSON.stringify(trades));
             updateTradeList();
         }
 
@@ -848,6 +862,7 @@
             };
 
             orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
             document.getElementById('order-form').reset();
             updateOrderList();
         }
@@ -896,9 +911,9 @@
         // Функция удаления заказа
         function removeOrder(index) {
             orders.splice(index, 1);
+            localStorage.setItem('orders', JSON.stringify(orders));
             updateOrderList();
         }
     </script>
 </body>
-
-</html>`
+</html>

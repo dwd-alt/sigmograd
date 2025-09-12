@@ -1,1 +1,12 @@
-20
+{
+  "name": "sigmograd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'No build needed'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

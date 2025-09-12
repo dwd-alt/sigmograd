@@ -287,6 +287,14 @@
             border-radius: 10px;
             transition: width 0.5s ease;
         }
+        .voted-message {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--accent-color);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
         @media (max-width: 768px) {
             nav ul {
                 flex-direction: column;
@@ -438,6 +446,7 @@
                                 <button class="vote-btn" onclick="vote(1)">
                                     <i class="fas fa-check-circle"></i> Голосовать за этого кандидата
                                 </button>
+                                <div class="voted-message" id="voted-message-1">Вы уже голосовали за этого кандидата!</div>
                             </div>
 
                             <!-- Кандидат 2 -->
@@ -463,6 +472,7 @@
                                 <button class="vote-btn" onclick="vote(2)">
                                     <i class="fas fa-check-circle"></i> Голосовать за этого кандидата
                                 </button>
+                                <div class="voted-message" id="voted-message-2">Вы уже голосовали за этого кандидата!</div>
                             </div>
                         </div>
 
@@ -687,6 +697,13 @@
                 electionData = JSON.parse(savedData);
             }
             updateElectionResults();
+            
+            // Показать сообщение о том, что пользователь уже голосовал
+            const currentPlayer = localStorage.getItem('currentPlayer');
+            if (currentPlayer && electionData.votedPlayers.includes(currentPlayer)) {
+                document.getElementById('voted-message-1').style.display = 'block';
+                document.getElementById('voted-message-2').style.display = 'block';
+            }
         }
 
         // Сохранение данных голосования в localStorage
@@ -703,9 +720,14 @@
                 return;
             }
 
+            // Сохраняем текущего игрока
+            localStorage.setItem('currentPlayer', playerName);
+
             // Проверяем, голосовал ли уже этот игрок
             if (electionData.votedPlayers.includes(playerName)) {
                 alert("Вы уже голосовали!");
+                document.getElementById('voted-message-1').style.display = 'block';
+                document.getElementById('voted-message-2').style.display = 'block';
                 return;
             }
 
@@ -728,7 +750,12 @@
             // Обновляем отображение
             updateElectionResults();
 
+            // Показываем сообщение о успешном голосовании
             alert("Спасибо за ваш голос, " + playerName + "!");
+            
+            // Показываем сообщение о том, что пользователь уже голосовал
+            document.getElementById('voted-message-1').style.display = 'block';
+            document.getElementById('voted-message-2').style.display = 'block';
         }
 
         // Функция обновления результатов голосования
@@ -759,14 +786,14 @@
         // Загрузка сохраненных данных при загрузке страницы
         window.addEventListener('load', function() {
             loadElectionData();
-
+            
             // Загрузка данных о торговле и заказах
             const savedTrades = localStorage.getItem('trades');
             if (savedTrades) {
                 trades = JSON.parse(savedTrades);
                 updateTradeList();
             }
-
+            
             const savedOrders = localStorage.getItem('orders');
             if (savedOrders) {
                 orders = JSON.parse(savedOrders);

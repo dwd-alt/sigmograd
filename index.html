@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGMOGRAD | Minecraft Сервер</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --main-color: #4CAF50;
+            --accent-color: #FFD700;
+            --dark-bg: #1a1a1a;
+            --darker-bg: #121212;
+            --card-bg: #242424;
+            --text-light: #f0f0f0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            background-image: url('https://i.imgur.com/7R6m9Qa.png');
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.85);
+            min-height: 100vh;
+        }
+        header {
+            background-color: var(--darker-bg);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            border-bottom: 2px solid var(--main-color);
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+        nav ul li a {
+            color: var(--main-color);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            display: block;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            margin: 0.2rem;
+        }
+        nav ul li a:hover {
+            background-color: var(--main-color);
+            color: var(--darker-bg);
+            transform: translateY(-2px);
+        }
+        .logo {
+            text-align: center;
+            padding: 2rem 0;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        section {
+            padding: 3rem 0;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--accent-color);
+        }
+        h2 {
+            border-bottom: 2px solid var(--main-color);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .server-ip {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(145deg, var(--darker-bg), var(--card-bg));
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            cursor: pointer;
+            user-select: all;
+            border: 1px solid var(--main-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .server-ip:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(145deg, var(--card-bg), var(--darker-bg));
+        }
+        .server-ip i {
+            margin-right: 10px;
+        }
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .city-card {
+            background: linear-gradient(145deg, var(--card-bg), var(--darker-bg));
+            padding: 1.8rem;
+            border-radius: 10px;
+            border-left: 5px solid var(--main-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .city-card:hover {
+            transform: translateY(-5px);
+        }
+        .city-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+        .content-box {
+            background: linear-gradient(145deg, var(--card-bg), var(--darker-bg));
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: var(--text-light);
+        }
+        .btn {
+            background-color: var(--main-color);
+            color: var(--darker-bg);
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+        .announcement {
+            background-color: rgba(255, 215, 0, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+        .announcement h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+        footer {
+            background-color: var(--darker-bg);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 2px solid var(--main-color);
+        }
+        .discord-widget {
+            background-color: #5865F2;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: inline-block;
+        }
+
+        /* Стили для раздела выборов */
+        .election-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .candidate-card {
+            background: linear-gradient(145deg, var(--card-bg), var(--darker-bg));
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #444;
+            transition: all 0.3s ease;
+        }
+        .candidate-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+        .candidate-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--main-color);
+            margin: 0 auto 1rem;
+        }
+        .candidate-name {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .candidate-nickname {
+            color: var(--main-color);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        .candidate-platform {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 3px solid var(--accent-color);
+        }
+        .candidate-platform h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+        .vote-btn {
+            background: linear-gradient(145deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        .vote-btn:hover {
+            background: linear-gradient(145deg, #FFD700, #FFA500);
+            transform: scale(1.05);
+        }
+        .vote-count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 1rem 0;
+        }
+        .results-box {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            border: 2px solid var(--main-color);
+        }
+        .progress-bar {
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--main-color), var(--accent-color));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            nav ul li {
+                width: 100%;
+                text-align: center;
+            }
+            .election-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <header>
+            <div class="container">
+                <nav>
+                    <ul>
+                        <li><a href="#home"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="#about"><i class="fas fa-info-circle"></i> О сервере</a></li>
+                        <li><a href="#map"><i class="fas fa-map"></i> Карта</a></li>
+                        <li><a href="#cities"><i class="fas fa-city"></i> Города и страны</a></li>
+                        <li><a href="#elections"><i class="fas fa-vote-yea"></i> Выборы</a></li>
+                        <li><a href="#info"><i class="fas fa-server"></i> Информация</a></li>
+                        <li><a href="#rules"><i class="fas fa-gavel"></i> Правила</a></li>
+                        <li><a href="#market"><i class="fas fa-store"></i> Торговля</a></li>
+                        <li><a href="#orders"><i class="fas fa-truck-loading"></i> Заказы</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <section id="home">
+                <div class="container">
+                    <div class="logo">
+                        <i class="fas fa-cube"></i> SIGMOGRAD
+                    </div>
+                    <h1>Добро пожаловать на политический и дружеский сервер</h1>
+                    <p style="text-align: center; font-size: 1.2rem;">Спокойная атмосфера без войн. Строй, общайся, развивай свои города!</p>
+                    <div class="server-ip" onclick="copyIP()">
+                        <i class="fas fa-copy"></i> SIGMOGRAD.aternos.me:51798
+                    </div>
+                </div>
+            </section>
+
+            <section id="about">
+                <div class="container">
+                    <h2>О нашем сервере</h2>
+                    <div class="content-box">
+                        <p>Добро пожаловать в <strong>SIGMOGRAD</strong>! Наш сервер создан для тех, кто ищет спокойной и дружеской атмосферы без гриферства и войн.</p>
+                        <p>Мы делаем акцент на:</p>
+                        <ul>
+                            <li>Создании и развитии городов и государств</li>
+                            <li>Политическом ролевом взаимодействии</li>
+                            <li>Совместных проектах и строительстве</li>
+                            <li>Торговле и экономике</li>
+                            <li>Дружеском общении и взаимопомощи</li>
+                        </ul>
+                        <p>Присоединяйся к нашему растущему сообществу!</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="map">
+                <div class="container">
+                    <h2>Карта Сервера</h2>
+                    <div class="content-box">
+                        <p>Посмотри на наши текущие постройки и города! Скоро здесь появится интерактивная карта.</p>
+                        <div style="height: 400px; border-radius: 10px; overflow: hidden; border: 2px solid var(--main-color);">
+                            <img src="karta.png"
+                                 alt="Карта сервера SIGMOGRAD"
+                                 style="width: 100%; height: 100%; object-fit: cover;"
+                                 onerror="this.src='https://i.imgur.com/7R6m9Qa.png'">
+                        </div>
+                        <p style="margin-top: 1rem; text-align: center;">
+                            <em>Карта мира SIGMOGRAD. Исследуй и строй!</em>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cities">
+                <div class="container">
+                    <h2>Города и страны</h2>
+                    <p>На нашем сервере уже образовались первые государства. Присоединяйся к одному из них или основай свой собственный город!</p>
+
+                    <div class="cities-grid">
+                        <div class="city-card">
+                            <h3>Сигмоград</h3>
+                            <p><strong>Тип:</strong> Столица</p>
+                            <p><strong>Лидер:</strong> Основатель сервера</p>
+                            <p><strong>Население:</strong> Растет</p>
+                            <p><strong>Описание:</strong> Столичный мегаполис и административный центр сервера. Развитая инфраструктура и архитектура.</p>
+                        </div>
+                        <div class="city-card">
+                            <h3>Бульмения</h3>
+                            <p><strong>Тип:</strong> Город-государство</p>
+                            <p><strong>Лидер:</strong> Нужен мэр</p>
+                            <p><strong>Население:</strong> Открыт для заселения</p>
+                            <p><strong>Описание:</strong> Спокойный город с упором на сельское хозяйство и традиционные ремесла. Ищет активных жителей!</p>
+                        </div>
+                        <div class="city-card">
+                            <h3>Ваш город?</h3>
+                            <p><strong>Тип:</strong> Свободные земли</p>
+                            <p><strong>Лидер:</strong> Ты!</p>
+                            <p><strong>Население:</strong> 0/∞</p>
+                            <p><strong>Описание:</strong> Оснуй собственное государство! Получи помощь от администрации при основании.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="elections">
+                <div class="container">
+                    <h2><i class="fas fa-vote-yea"></i> Выборы Мэра Сигмограда</h2>
+                    <div class="content-box">
+                        <div class="announcement">
+                            <h4>🗳️ Голосование открыто!</h4>
+                            <p>Выбери достойного кандидата на пост мэра столицы.</p>
+                            <p><strong>Условия:</strong> Голосовать могут только игроки, проведшие на сервере более 10 часов.</p>
+                        </div>
+
+                        <div class="election-grid">
+                            <!-- Кандидат 1 -->
+                            <div class="candidate-card">
+                                <img src="https://i.imgur.com/7R6m9Qa.png"
+                                     alt="Кандидат 1"
+                                     class="candidate-image"
+                                     onerror="this.src='https://i.imgur.com/7R6m9Qa.png'">
+                                <h3 class="candidate-name">M1cyy_1337</h3>
+                                <p class="candidate-nickname"></p>
+
+                                <div class="candidate-platform">
+                                    <h4>Обещания и планы:</h4>
+                                    <ul>
+                                        <li>Развитие инфраструктуры: построю новые удобные места для отдыха и развлечений, улучшу дороги и общественные здания.
+Безопасность: организую активное сотрудничество с полицией и службами безопасности для снижения преступности.
+Поддержка игроков: сделаю так, чтобы каждому жителю города было комфортно и интересно — буду слушать ваши предложения и решать проблемы.
+Экономика города: способствовать развитию торговли, создать игровые мероприятия и акции, чтобы увеличить доходы горожан.
+Чистота и порядок: следить, чтобы город был чистым и ухоженным.
+Почему я:
+
+Я готов вкладывать время и силы, чтобы сделать наш город лучшим. Вместе мы сможем сделать его процветающим и уютным для всех.
+
+Призыв к голосованию:
+
+Поддержите меня на выборах! Ваш голос — это шанс изменить наш город к лучшему.
+
+Спасибо за внимание!</li>
+
+                                    </ul>
+                                </div>
+
+                                <div class="vote-count" id="votes-candidate1">0 голосов</div>
+                                <button class="vote-btn" onclick="vote(1)">
+                                    <i class="fas fa-check-circle"></i> Голосовать за этого кандидата
+                                </button>
+                            </div>
+
+                            <!-- Кандидат 2 -->
+                            <div class="candidate-card">
+                                <img src="https://i.imgur.com/7R6m9Qa.png"
+                                     alt="Кандидат 2"
+                                     class="candidate-image"
+                                     onerror="this.src='https://i.imgur.com/7R6m9Qa.png'">
+                                <h3 class="candidate-name">Елена Прекрасная</h3>
+                                <p class="candidate-nickname">@HelenTheBeautiful</p>
+
+                                <div class="candidate-platform">
+                                    <h4>Обещания и планы:</h4>
+                                    <ul>
+                                        <li>Создать культурный центр с библиотекой</li>
+                                        <li>Организовать регулярные ивенты и конкурсы</li>
+                                        <li>Улучшить архитектуру города</li>
+                                        <li>Развивать международные отношения</li>
+                                    </ul>
+                                </div>
+
+                                <div class="vote-count" id="votes-candidate2">0 голосов</div>
+                                <button class="vote-btn" onclick="vote(2)">
+                                    <i class="fas fa-check-circle"></i> Голосовать за этого кандидата
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Результаты голосования -->
+                        <div class="results-box">
+                            <h3>📊 Результаты голосования</h3>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-candidate1" style="width: 50%;"></div>
+                            </div>
+                            <p>Александр Великий: <span id="percent-candidate1">50%</span></p>
+
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-candidate2" style="width: 50%;"></div>
+                            </div>
+                            <p>Елена Прекрасная: <span id="percent-candidate2">50%</span></p>
+
+                            <p><strong>Всего проголосовало: <span id="total-votes">0</span> игроков</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="info">
+                <div class="container">
+                    <h2>Информация для подключения</h2>
+
+                    <div class="content-box">
+                        <h3><i class="fas fa-network-wired"></i> IP-адрес сервера</h3>
+                        <div class="server-ip" onclick="copyIP()">
+                            <i class="fas fa-copy"></i> SIGMOGRAD.aternos.me:51798
+                        </div>
+                    </div>
+
+                    <div class="content-box">
+                        <h3><i class="fas fa-code-branch"></i> Версия и моды</h3>
+                        <p><strong>Версия:</strong> Minecraft Java Edition 1.20.4</p>
+                        <p><strong>Сборка:</strong> Forge + OptiFine</p>
+                        <p><strong>Обязательные моды:</strong>
+                            <span class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.9rem;">Скачать все</span>
+                        </p>
+                    </div>
+
+                    <div class="content-box">
+                        <h3><i class="fas fa-question-circle"></i> Как подключиться?</h3>
+                        <ol>
+                            <li>Установи Forge для версии 1.20.4</li>
+                            <li>Установи OptiFine (опционально, для улучшения FPS)</li>
+                            <li>Скачай и помести необходимые моды в папку <code>mods</code></li>
+                            <li>Запусти игру, выбери соответствующий профиль Forge</li>
+                            <li>Добавь наш сервер в список через "Мультиплеер"</li>
+                            <li>Подключайся и наслаждайся!</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <section id="rules">
+                <div class="container">
+                    <h2>Правила сервера</h2>
+                    <div class="content-box">
+                        <div class="announcement">
+                            <h4>Основной принцип</h4>
+                            <p>Уважай других игроков и их труд. Мы здесь чтобы получать удовольствие от игры вместе.</p>
+                        </div>
+
+                        <h3>📜 Основные правила:</h3>
+                        <ol>
+                            <li><strong>Никакого гриферства</strong> - запрещено уничтожать или портить чужие постройки.</li>
+                            <li><strong>Никакого воровства</strong> - не залезай в чужие сундуки без разрешения.</li>
+                            <li><strong>Без читов</strong> - запрещены любые читы, x-ray, дюпы и т.д.</li>
+                            <li><strong>Уважение в чате</strong> - не оскорбляй других игроков, не спамь, не флуди.</li>
+                            <li><strong>Соблюдайте политику сервера</strong> - мирное сосуществование и развитие.</li>
+                        </ol>
+
+                        <h3>🎯 Что поощряется:</h3>
+                        <ul>
+                            <li>Создание и развитие городов</li>
+                            <li>Торговля и экономическое взаимодействие</li>
+                            <li>Совместные проекты и строительство</li>
+                            <li>Помощь новичкам</li>
+                            <li>Креативные и интересные постройки</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="market">
+                <div class="container">
+                    <h2>Торговля и объявления</h2>
+                    <div class="content-box">
+                        <p>Здесь ты можешь разместить свои предложения о покупке, продаже или обмене ресурсов.</p>
+
+                        <h3>Добавить новое объявление</h3>
+                        <form id="trade-form">
+                            <div class="form-group">
+                                <label for="player-name">Ваш игровой ник:</label>
+                                <input type="text" id="player-name" required placeholder="Например: SigmaPro">
+                            </div>
+                            <div class="form-group">
+                                <label for="trade-type">Тип объявления:</label>
+                                <select id="trade-type" required>
+                                    <option value="">-- Выберите тип --</option>
+                                    <option value="sell">Продаю</option>
+                                    <option value="buy">Покупаю</option>
+                                    <option value="exchange">Меняю</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="trade-item">Что предлагаете/ищете:</label>
+                                <input type="text" id="trade-item" required placeholder="Например: 64 алмаза">
+                            </div>
+                            <div class="form-group">
+                                <label for="trade-price">Цена/Предложение:</label>
+                                <input type="text" id="trade-price" required placeholder="Например: 5 изумрудов">
+                            </div>
+                            <div class="form-group">
+                                <label for="trade-contacts">Контакты (Дискорд/Игровой ник):</label>
+                                <input type="text" id="trade-contacts" required placeholder="Например: SigmaPro#1234">
+                            </div>
+                            <button type="button" class="btn" onclick="addTrade()"><i class="fas fa-plus"></i> Добавить объявление</button>
+                        </form>
+
+                        <h3 style="margin-top: 2rem;">Активные объявления</h3>
+                        <div id="trade-list">
+                            <p id="no-trades"><em>Пока объявлений нет. Будь первым!</em></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="orders">
+                <div class="container">
+                    <h2>Заказ ресурсов</h2>
+                    <div class="content-box">
+                        <p>Нужно много ресурсов для большой постройки? Сделай заказ и игроки помогут тебе!</p>
+
+                        <h3>Форма заказа ресурсов</h3>
+                        <form id="order-form">
+                            <div class="form-group">
+                                <label for="order-name">Ваш игровой ник:</label>
+                                <input type="text" id="order-name" required placeholder="Например: SigmaPro">
+                            </div>
+                            <div class="form-group">
+                                <label for="order-resource">Нужный ресурс и количество:</label>
+                                <input type="text" id="order-resource" required placeholder="Например: 128 блоков камня">
+                            </div>
+                            <div class="form-group">
+                                <label for="order-deadline">Желаемый срок:</label>
+                                <select id="order-deadline">
+                                    <option value="no">Без сроков</option>
+                                    <option value="1day">1 день</option>
+                                    <option value="3days">3 дня</option>
+                                    <option value="1week">1 неделя</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="order-price">Предлагаемая оплата:</label>
+                                <input type="text" id="order-price" required placeholder="Например: 10 алмазов">
+                            </div>
+                            <div class="form-group">
+                                <label for="order-contacts">Контакты для связи:</label>
+                                <input type="text" id="order-contacts" required placeholder="Дискорд или игровой ник">
+                            </div>
+                            <button type="button" class="btn" onclick="addOrder()"><i class="fas fa-truck-loading"></i> Разместить заказ</button>
+                        </form>
+
+                        <h3 style="margin-top: 2rem;">Активные заказы</h3>
+                        <div id="order-list">
+                            <p id="no-orders"><em>Заказов пока нет.</em></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="discord-widget">
+                    <h3><i class="fab fa-discord"></i> Присоединяйся к нашему Discord!</h3>
+                    <p>Обсуждай, предлагай идеи, находи партнеров для строительства</p>
+                    <a href="#" class="btn">Перейти в Discord</a>
+                </div>
+                <p>© 2024 SIGMOGRAD Minecraft Server. Все права защищены.</p>
+                <p>Minecraft является товарным знаком Mojang AB.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Функция для копирования IP
+        function copyIP() {
+            navigator.clipboard.writeText("SIGMOGRAD.aternos.me:51798")
+                .then(() => {
+                    const ipElement = document.querySelector('.server-ip');
+                    const originalText = ipElement.innerHTML;
+                    ipElement.innerHTML = '<i class="fas fa-check"></i> IP скопирован!';
+                    ipElement.style.background = 'linear-gradient(145deg, #4CAF50, #2E7D32)';
+
+                    setTimeout(() => {
+                        ipElement.innerHTML = originalText;
+                        ipElement.style.background = 'linear-gradient(145deg, var(--darker-bg), var(--card-bg))';
+                    }, 2000);
+                });
+        }
+
+        // Массивы для хранения данных
+        let trades = [];
+        let orders = [];
+
+        // Данные для голосования
+        let electionData = {
+            candidate1: { votes: 0, name: "Александр Великий" },
+            candidate2: { votes: 0, name: "Елена Прекрасная" },
+            totalVotes: 0,
+            votedPlayers: JSON.parse(localStorage.getItem('votedPlayers')) || []
+        };
+
+        // Функция голосования
+        function vote(candidateNumber) {
+            const playerName = prompt("Введите ваш игровой ник для голосования:");
+
+            if (!playerName) {
+                alert("Ник не может быть пустым!");
+                return;
+            }
+
+            // Проверяем, голосовал ли уже этот игрок
+            if (electionData.votedPlayers.includes(playerName)) {
+                alert("Вы уже голосовали!");
+                return;
+            }
+
+            // Добавляем голос
+            if (candidateNumber === 1) {
+                electionData.candidate1.votes++;
+            } else if (candidateNumber === 2) {
+                electionData.candidate2.votes++;
+            }
+
+            // Обновляем общее количество голосов
+            electionData.totalVotes = electionData.candidate1.votes + electionData.candidate2.votes;
+
+            // Добавляем игрока в список проголосовавших
+            electionData.votedPlayers.push(playerName);
+            localStorage.setItem('votedPlayers', JSON.stringify(electionData.votedPlayers));
+
+            // Сохраняем результаты
+            localStorage.setItem('electionData', JSON.stringify(electionData));
+
+            // Обновляем отображение
+            updateElectionResults();
+
+            alert("Спасибо за ваш голос, " + playerName + "!");
+        }
+
+        // Функция обновления результатов голосования
+        function updateElectionResults() {
+            const total = electionData.totalVotes;
+
+            // Обновляем счетчики голосов
+            document.getElementById('votes-candidate1').textContent =
+                electionData.candidate1.votes + ' голосов';
+            document.getElementById('votes-candidate2').textContent =
+                electionData.candidate2.votes + ' голосов';
+
+            // Обновляем проценты
+            const percent1 = total > 0 ? Math.round((electionData.candidate1.votes / total) * 100) : 50;
+            const percent2 = total > 0 ? Math.round((electionData.candidate2.votes / total) * 100) : 50;
+
+            document.getElementById('percent-candidate1').textContent = percent1 + '%';
+            document.getElementById('percent-candidate2').textContent = percent2 + '%';
+
+            // Обновляем прогресс-бары
+            document.getElementById('progress-candidate1').style.width = percent1 + '%';
+            document.getElementById('progress-candidate2').style.width = percent2 + '%';
+
+            // Обновляем общее количество голосов
+            document.getElementById('total-votes').textContent = electionData.totalVotes;
+        }
+
+        // Загрузка сохраненных данных при загрузке страницы
+        window.addEventListener('load', function() {
+            const savedData = localStorage.getItem('electionData');
+            if (savedData) {
+                electionData = JSON.parse(savedData);
+                updateElectionResults();
+            }
+        });
+
+        // Функция добавления объявления
+        function addTrade() {
+            const playerName = document.getElementById('player-name').value;
+            const tradeType = document.getElementById('trade-type').value;
+            const tradeItem = document.getElementById('trade-item').value;
+            const tradePrice = document.getElementById('trade-price').value;
+            const tradeContacts = document.getElementById('trade-contacts').value;
+
+            if (!playerName || !tradeType || !tradeItem || !tradePrice || !tradeContacts) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            const trade = {
+                player: playerName,
+                type: tradeType,
+                item: tradeItem,
+                price: tradePrice,
+                contacts: tradeContacts,
+                date: new Date().toLocaleDateString()
+            };
+
+            trades.push(trade);
+            document.getElementById('trade-form').reset();
+            updateTradeList();
+        }
+
+        // Функция обновления списка объявлений
+        function updateTradeList() {
+            const tradeList = document.getElementById('trade-list');
+            const noTrades = document.getElementById('no-trades');
+
+            if (trades.length === 0) {
+                noTrades.style.display = 'block';
+                tradeList.innerHTML = '';
+                return;
+            }
+
+            noTrades.style.display = 'none';
+            tradeList.innerHTML = '';
+
+            trades.forEach((trade, index) => {
+                const typeText = trade.type === 'sell' ? 'Продает' : trade.type === 'buy' ? 'Покупает' : 'Меняет';
+                const tradeElement = document.createElement('div');
+                tradeElement.className = 'announcement';
+                tradeElement.innerHTML = `
+                    <h4>${trade.player} ${typeText.toLowerCase()}</h4>
+                    <p><strong>Предмет:</strong> ${trade.item}</p>
+                    <p><strong>Цена:</strong> ${trade.price}</p>
+                    <p><strong>Контакты:</strong> ${trade.contacts}</p>
+                    <p><small>Добавлено: ${trade.date}</small></p>
+                    <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;" onclick="removeTrade(${index})">Удалить</button>
+                `;
+                tradeList.appendChild(tradeElement);
+            });
+        }
+
+        // Функция удаления объявления
+        function removeTrade(index) {
+            trades.splice(index, 1);
+            updateTradeList();
+        }
+
+        // Функция добавления заказа
+        function addOrder() {
+            const orderName = document.getElementById('order-name').value;
+            const orderResource = document.getElementById('order-resource').value;
+            const orderDeadline = document.getElementById('order-deadline').value;
+            const orderPrice = document.getElementById('order-price').value;
+            const orderContacts = document.getElementById('order-contacts').value;
+
+            if (!orderName || !orderResource || !orderPrice || !orderContacts) {
+                alert('Заполните все обязательные поля!');
+                return;
+            }
+
+            const order = {
+                player: orderName,
+                resource: orderResource,
+                deadline: orderDeadline,
+                price: orderPrice,
+                contacts: orderContacts,
+                date: new Date().toLocaleDateString()
+            };
+
+            orders.push(order);
+            document.getElementById('order-form').reset();
+            updateOrderList();
+        }
+
+        // Функция обновления списка заказов
+        function updateOrderList() {
+            const orderList = document.getElementById('order-list');
+            const noOrders = document.getElementById('no-orders');
+
+            if (orders.length === 0) {
+                noOrders.style.display = 'block';
+                orderList.innerHTML = '';
+                return;
+            }
+
+            noOrders.style.display = 'none';
+            orderList.innerHTML = '';
+
+            orders.forEach((order, index) => {
+                const deadlineText = getDeadlineText(order.deadline);
+                const orderElement = document.createElement('div');
+                orderElement.className = 'announcement';
+                orderElement.innerHTML = `
+                    <h4>${order.player} заказывает</h4>
+                    <p><strong>Ресурс:</strong> ${order.resource}</p>
+                    <p><strong>Срок:</strong> ${deadlineText}</p>
+                    <p><strong>Оплата:</strong> ${order.price}</p>
+                    <p><strong>Контакты:</strong> ${order.contacts}</p>
+                    <p><small>Добавлено: ${order.date}</small></p>
+                    <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.8rem;" onclick="removeOrder(${index})">Удалить</button>
+                `;
+                orderList.appendChild(orderElement);
+            });
+        }
+
+        // Функция получения текста срока
+        function getDeadlineText(deadline) {
+            switch(deadline) {
+                case '1day': return '1 день';
+                case '3days': return '3 дня';
+                case '1week': return '1 неделя';
+                default: return 'Без сроков';
+            }
+        }
+
+        // Функция удаления заказа
+        function removeOrder(index) {
+            orders.splice(index, 1);
+            updateOrderList();
+        }
+    </script>
+</body>
+</html>`

@@ -295,6 +295,84 @@
             margin-top: 10px;
             display: none;
         }
+        
+        /* Стили для модального окна модов */
+        .mods-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            overflow-y: auto;
+        }
+        .mods-modal-content {
+            background-color: var(--darker-bg);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--main-color);
+        }
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+        .mods-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .mod-item {
+            background: var(--card-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+        .mod-item h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+        .download-all-btn {
+            background: linear-gradient(145deg, #FFD700, #FFA500);
+            color: var(--darker-bg);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 1rem 0;
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+        .download-all-btn:hover {
+            background: linear-gradient(145deg, #FFA500, #FF8C00);
+        }
+        .download-mod-btn {
+            background-color: var(--main-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+        .download-mod-btn:hover {
+            background-color: #45a049;
+        }
         @media (max-width: 768px) {
             nav ul {
                 flex-direction: column;
@@ -305,6 +383,9 @@
                 text-align: center;
             }
             .election-grid {
+                grid-template-columns: 1fr;
+            }
+            .mods-list {
                 grid-template-columns: 1fr;
             }
         }
@@ -511,7 +592,9 @@
                         <p><strong>Версия:</strong> Minecraft Java Edition 1.20.4</p>
                         <p><strong>Сборка:</strong> Forge + OptiFine</p>
                         <p><strong>Обязательные моды:</strong>
-                            <span class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.9rem;">Скачать все</span>
+                            <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.9rem;" onclick="openModsModal()">
+                                <i class="fas fa-download"></i> Скачать все моды
+                            </button>
                         </p>
                     </div>
 
@@ -648,6 +731,63 @@
             </section>
         </main>
 
+        <!-- Модальное окно для скачивания модов -->
+        <div id="modsModal" class="mods-modal">
+            <div class="mods-modal-content">
+                <span class="close-modal" onclick="closeModsModal()">&times;</span>
+                <h2><i class="fas fa-download"></i> Скачать моды для сервера</h2>
+                <p>Для игры на нашем сервере необходимо установить следующие моды. Скачай их и помести в папку <code>mods</code> твоего клиента Minecraft.</p>
+                
+                <button class="download-all-btn" onclick="downloadAllMods()">
+                    <i class="fas fa-download"></i> Скачать все моды одним архивом
+                </button>
+                
+                <div class="mods-list">
+                    <div class="mod-item">
+                        <h4>Forge 1.20.4</h4>
+                        <p>Базовый модлоадер для Minecraft</p>
+                        <button class="download-mod-btn" onclick="downloadMod('Forge', 'https://files.minecraftforge.net/net/minecraftforge/forge/')">
+                            <i class="fas fa-download"></i> Скачать Forge
+                        </button>
+                    </div>
+                    
+                    <div class="mod-item">
+                        <h4>OptiFine</h4>
+                        <p>Улучшает производительность и добавляет HD текстуры</p>
+                        <button class="download-mod-btn" onclick="downloadMod('OptiFine', 'https://optifine.net/downloads')">
+                            <i class="fas fa-download"></i> Скачать OptiFine
+                        </button>
+                    </div>
+                    
+                    <div class="mod-item">
+                        <h4>JourneyMap</h4>
+                        <p>Карта и мини-карта в игре</p>
+                        <button class="download-mod-btn" onclick="downloadMod('JourneyMap', 'https://www.curseforge.com/minecraft/mc-mods/journeymap')">
+                            <i class="fas fa-download"></i> Скачать JourneyMap
+                        </button>
+                    </div>
+                    
+                    <div class="mod-item">
+                        <h4>WorldEdit</h4>
+                        <p>Инструмент для удобного строительства</p>
+                        <button class="download-mod-btn" onclick="downloadMod('WorldEdit', 'https://www.curseforge.com/minecraft/mc-mods/worldedit')">
+                            <i class="fas fa-download"></i> Скачать WorldEdit
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="content-box" style="margin-top: 1.5rem;">
+                    <h3>Инструкция по установке:</h3>
+                    <ol>
+                        <li>Скачай и установи Forge для Minecraft 1.20.4</li>
+                        <li>Скачай необходимые моды с этой страницы</li>
+                        <li>Помести файлы модов (.jar) в папку <code>mods</code> в директории Minecraft</li>
+                        <li>Запусти Minecraft, выбери профиль Forge и наслаждайся игрой!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
         <footer>
             <div class="container">
                 <div class="discord-widget">
@@ -678,6 +818,46 @@
                 });
         }
 
+        // Функции для работы с модальным окном модов
+        function openModsModal() {
+            document.getElementById('modsModal').style.display = 'block';
+        }
+
+        function closeModsModal() {
+            document.getElementById('modsModal').style.display = 'none';
+        }
+
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('modsModal');
+            if (event.target == modal) {
+                closeModsModal();
+            }
+        }
+
+        // Функция для скачивания отдельного мода
+        function downloadMod(modName, modUrl) {
+            // Открываем ссылку в новом окне
+            window.open(modUrl, '_blank');
+            
+            // Показываем уведомление
+            alert(`Вы будете перенаправлены на страницу загрузки ${modName}. Пожалуйста, скачайте последнюю версию, совместимую с Minecraft 1.20.4.`);
+        }
+
+        // Функция для скачивания всех модов (архив)
+        function downloadAllMods() {
+            // В реальном проекте здесь должна быть ссылка на ZIP-архив со всеми модами
+            alert('В реальной реализации здесь будет скачиваться ZIP-архив со всеми необходимыми модами. В демонстрационных целях мы показываем это сообщение.');
+            
+            // Эмуляция скачивания (в реальном проекте замените на реальную ссылку)
+            const link = document.createElement('a');
+            link.href = '#'; // Замените на реальный URL архива
+            link.download = 'SIGMOGRAD_Mods_Pack.zip';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         // Массивы для хранения данных
         let trades = [];
         let orders = [];
@@ -697,7 +877,7 @@
                 electionData = JSON.parse(savedData);
             }
             updateElectionResults();
-            
+
             // Показать сообщение о том, что пользователь уже голосовал
             const currentPlayer = localStorage.getItem('currentPlayer');
             if (currentPlayer && electionData.votedPlayers.includes(currentPlayer)) {
@@ -752,7 +932,7 @@
 
             // Показываем сообщение о успешном голосовании
             alert("Спасибо за ваш голос, " + playerName + "!");
-            
+
             // Показываем сообщение о том, что пользователь уже голосовал
             document.getElementById('voted-message-1').style.display = 'block';
             document.getElementById('voted-message-2').style.display = 'block';
@@ -786,14 +966,14 @@
         // Загрузка сохраненных данных при загрузке страницы
         window.addEventListener('load', function() {
             loadElectionData();
-            
+
             // Загрузка данных о торговле и заказах
             const savedTrades = localStorage.getItem('trades');
             if (savedTrades) {
                 trades = JSON.parse(savedTrades);
                 updateTradeList();
             }
-            
+
             const savedOrders = localStorage.getItem('orders');
             if (savedOrders) {
                 orders = JSON.parse(savedOrders);

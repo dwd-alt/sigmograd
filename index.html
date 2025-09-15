@@ -13,6 +13,10 @@
             --darker-bg: #121212;
             --card-bg: #242424;
             --text-light: #f0f0f0;
+            --war-color: #ff4444;
+            --protest-color: #ffaa00;
+            --peace-color: #4CAF50;
+            --alert-color: #ff8800;
         }
         * {
             margin: 0;
@@ -373,6 +377,94 @@
         .download-mod-btn:hover {
             background-color: #45a049;
         }
+
+        /* Стили для админ-панели */
+        .admin-panel {
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            border: 2px solid #e74c3c;
+        }
+        .admin-section {
+            margin-bottom: 2rem;
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 0.5rem;
+            cursor: pointer;
+        }
+        .status-war { background-color: var(--war-color); }
+        .status-protest { background-color: var(--protest-color); }
+        .status-peace { background-color: var(--peace-color); }
+        .status-alert { background-color: var(--alert-color); }
+        
+        /* Стили для раздела игроков */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .player-card {
+            background: linear-gradient(145deg, var(--card-bg), var(--darker-bg));
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid var(--accent-color);
+        }
+        .player-role {
+            font-weight: bold;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            margin: 0.5rem 0;
+            display: inline-block;
+        }
+        .role-owner { background-color: #e74c3c; }
+        .role-admin { background-color: #9b59b6; }
+        .role-moderator { background-color: #3498db; }
+        .role-player { background-color: #2ecc71; }
+        
+        /* Стили для новостей */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .news-card {
+            background: linear-gradient(145deg, var(--card-bg), var(--darker-bg));
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .news-content {
+            padding: 1.5rem;
+        }
+        .news-date {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .news-video {
+            width: 100%;
+            height: 200px;
+            background: #000;
+        }
+        
+        /* Скрытые элементы */
+        .hidden {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             nav ul {
                 flex-direction: column;
@@ -386,6 +478,12 @@
                 grid-template-columns: 1fr;
             }
             .mods-list {
+                grid-template-columns: 1fr;
+            }
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+            .news-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -402,10 +500,13 @@
                         <li><a href="#map"><i class="fas fa-map"></i> Карта</a></li>
                         <li><a href="#cities"><i class="fas fa-city"></i> Города и страны</a></li>
                         <li><a href="#elections"><i class="fas fa-vote-yea"></i> Выборы</a></li>
+                        <li><a href="#players"><i class="fas fa-users"></i> Игроки</a></li>
+                        <li><a href="#news"><i class="fas fa-newspaper"></i> Новости</a></li>
                         <li><a href="#info"><i class="fas fa-server"></i> Информация</a></li>
                         <li><a href="#rules"><i class="fas fa-gavel"></i> Правила</a></li>
                         <li><a href="#market"><i class="fas fa-store"></i> Торговля</a></li>
                         <li><a href="#orders"><i class="fas fa-truck-loading"></i> Заказы</a></li>
+                        <li><a href="#" onclick="showAdminPanel(); return false;"><i class="fas fa-cog"></i> Админ</a></li>
                     </ul>
                 </nav>
             </div>
@@ -421,6 +522,15 @@
                     <p style="text-align: center; font-size: 1.2rem;">Спокойная атмосфера без войн. Строй, общайся, развивай свои города!</p>
                     <div class="server-ip" onclick="copyIP()">
                         <i class="fas fa-copy"></i> SIGMOGRAD.aternos.me:51798
+                    </div>
+                    
+                    <!-- Индикатор статуса мира -->
+                    <div class="content-box" id="world-status-box">
+                        <h3>Текущее положение в мире</h3>
+                        <div id="world-status-display">
+                            <span class="status-indicator status-peace" id="current-status">Мирное время</span>
+                        </div>
+                        <p id="status-description">На сервере царит мир и спокойствие. Игроки занимаются строительством и развитием.</p>
                     </div>
                 </div>
             </section>
@@ -568,10 +678,30 @@
                             <div class="progress-bar">
                                 <div class="progress-fill" id="progress-candidate2" style="width: 50%;"></div>
                             </div>
-                            <p>Елена Прекрасная: <span id="percent-candidate2">50%</span></p>
+                            <p>Макс: <span id="percent-candidate2">50%</span></p>
 
                             <p><strong>Всего проголосовало: <span id="total-votes">0</span> игроков</strong></p>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Новая секция: Игроки -->
+            <section id="players">
+                <div class="container">
+                    <h2><i class="fas fa-users"></i> Состав игроков</h2>
+                    <div class="players-grid" id="players-list">
+                        <!-- Игроки будут добавляться через JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Новая секция: Новости -->
+            <section id="news">
+                <div class="container">
+                    <h2><i class="fas fa-newspaper"></i> Последние новости</h2>
+                    <div class="news-grid" id="news-list">
+                        <!-- Новости будут добавляться через JavaScript -->
                     </div>
                 </div>
             </section>
@@ -617,7 +747,7 @@
                     <h2>Правила сервера</h2>
                     <div class="content-box">
                         <div class="announcement">
-                            <h4>Основной принцип</h4>
+                            <h4>Основной принцис</h4>
                             <p>Уважай других игроков и их труд. Мы здесь чтобы получать удовольствие от игры вместе.</p>
                         </div>
 
@@ -729,6 +859,68 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Админ панель (скрыта по умолчанию) -->
+            <section id="admin-panel" class="hidden">
+                <div class="container">
+                    <div class="admin-panel">
+                        <h2><i class="fas fa-cog"></i> Панель администратора</h2>
+                        
+                        <div class="admin-section">
+                            <h3>Управление статусом мира</h3>
+                            <div>
+                                <button class="status-indicator status-peace" onclick="setWorldStatus('peace')">Мирное время</button>
+                                <button class="status-indicator status-alert" onclick="setWorldStatus('alert')">Подготовка к войне</button>
+                                <button class="status-indicator status-protest" onclick="setWorldStatus('protest')">Протесты</button>
+                                <button class="status-indicator status-war" onclick="setWorldStatus('war')">Военное положение</button>
+                            </div>
+                        </div>
+
+                        <div class="admin-section">
+                            <h3>Статистика сервера</h3>
+                            <div class="form-group">
+                                <label>Общее население:</label>
+                                <input type="number" id="total-population" value="15">
+                                <button class="btn" onclick="updatePopulation()">Обновить</button>
+                            </div>
+                            <div class="form-group">
+                                <label>Онлайн игроков:</label>
+                                <input type="number" id="online-players" value="3">
+                                <button class="btn" onclick="updateOnlinePlayers()">Обновить</button>
+                            </div>
+                        </div>
+
+                        <div class="admin-section">
+                            <h3>Добавить новость</h3>
+                            <form id="news-form">
+                                <div class="form-group">
+                                    <label for="news-title">Заголовок:</label>
+                                    <input type="text" id="news-title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="news-content">Текст новости:</label>
+                                    <textarea id="news-content" rows="4" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="news-image">URL изображения (опционально):</label>
+                                    <input type="url" id="news-image">
+                                </div>
+                                <div class="form-group">
+                                    <label for="news-video">URL видео (опционально):</label>
+                                    <input type="url" id="news-video">
+                                </div>
+                                <button type="button" class="btn" onclick="addNews()">Опубликовать новость</button>
+                            </form>
+                        </div>
+
+                        <div class="admin-section">
+                            <h3>Управление игроками</h3>
+                            <button class="btn" onclick="loadPlayersForm()">Добавить/Редактировать игроков</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <!-- Модальное окно для скачивания модов -->
@@ -736,7 +928,7 @@
             <div class="mods-modal-content">
                 <span class="close-modal" onclick="closeModsModal()">&times;</span>
                 <h2><i class="fas fa-download"></i> Скачать моды для сервера</h2>
-                <p>Для игры на нашем сервере необходимо установить следующие моды. Скачай их и помести в папку <code>mods</code> твоего клиента Minecraft.</p>
+                <p>Для игры на нашем сервере необходимо установить следующие моды. Скачай им и помести в папку <code>mods</code> твоего клиента Minecraft.</p>
                 
                 <button class="download-all-btn" onclick="downloadAllMods()">
                     <i class="fas fa-download"></i> Скачать все моды одним архивом
@@ -802,7 +994,7 @@
     </div>
 
     <script>
-        // Функция для копирования IP
+        // ===== ОСНОВНЫЕ ФУНКЦИИ =====
         function copyIP() {
             navigator.clipboard.writeText("SIGMOGRAD.aternos.me:51798")
                 .then(() => {
@@ -818,7 +1010,172 @@
                 });
         }
 
-        // Функции для работы с модальным окном модов
+        // ===== АДМИН-ПАНЕЛЬ =====
+        function showAdminPanel() {
+            const password = prompt("Введите пароль администратора:");
+            if (password === "admin123") { // Замените на реальный пароль
+                document.getElementById('admin-panel').classList.remove('hidden');
+                window.location.href = '#admin-panel';
+            } else {
+                alert("Неверный пароль!");
+            }
+        }
+
+        function setWorldStatus(status) {
+            const statusDisplay = document.getElementById('current-status');
+            const statusDescription = document.getElementById('status-description');
+            
+            let statusText, description, statusClass;
+            
+            switch(status) {
+                case 'war':
+                    statusText = "Военное положение";
+                    description = "На сервере объявлено военное положение! Все игроки призываются к обороне.";
+                    statusClass = "status-war";
+                    break;
+                case 'protest':
+                    statusText = "Протесты";
+                    description = "В городах проходят массовые протесты. Политическая ситуация напряжена.";
+                    statusClass = "status-protest";
+                    break;
+                case 'alert':
+                    statusText = "Подготовка к войне";
+                    description = "Государства готовятся к возможному конфликту. Укрепляются границы.";
+                    statusClass = "status-alert";
+                    break;
+                case 'peace':
+                default:
+                    statusText = "Мирное время";
+                    description = "На сервере царит мир и спокойствие. Игроки занимаются строительством и развитием.";
+                    statusClass = "status-peace";
+            }
+            
+            statusDisplay.textContent = statusText;
+            statusDisplay.className = `status-indicator ${statusClass}`;
+            statusDescription.textContent = description;
+            
+            // Сохраняем в localStorage
+            localStorage.setItem('worldStatus', status);
+            localStorage.setItem('statusDescription', description);
+            
+            alert(`Статус мира изменен на: ${statusText}`);
+        }
+
+        function updatePopulation() {
+            const population = document.getElementById('total-population').value;
+            localStorage.setItem('population', population);
+            alert(`Население обновлено: ${population} игроков`);
+        }
+
+        function updateOnlinePlayers() {
+            const online = document.getElementById('online-players').value;
+            localStorage.setItem('onlinePlayers', online);
+            alert(`Онлайн игроков обновлено: ${online}`);
+        }
+
+        // ===== УПРАВЛЕНИЕ ИГРОКАМИ =====
+        const players = [
+            { name: "Основатель", role: "owner", nickname: "SigmaPro", joined: "01.01.2024" },
+            { name: "Главный Админ", role: "admin", nickname: "AdminAlex", joined: "02.01.2024" },
+            { name: "Модератор", role: "moderator", nickname: "ModeratorMax", joined: "03.01.2024" }
+        ];
+
+        function loadPlayersList() {
+            const playersList = document.getElementById('players-list');
+            playersList.innerHTML = '';
+            
+            players.forEach(player => {
+                let roleClass = 'role-player';
+                let roleText = 'Игрок';
+                
+                switch(player.role) {
+                    case 'owner': roleClass = 'role-owner'; roleText = 'Владелец'; break;
+                    case 'admin': roleClass = 'role-admin'; roleText = 'Администратор'; break;
+                    case 'moderator': roleClass = 'role-moderator'; roleText = 'Модератор'; break;
+                }
+                
+                const playerCard = document.createElement('div');
+                playerCard.className = 'player-card';
+                playerCard.innerHTML = `
+                    <h3>${player.name}</h3>
+                    <div class="player-role ${roleClass}">${roleText}</div>
+                    <p><strong>Никнейм:</strong> ${player.nickname}</p>
+                    <p><strong>На сервере с:</strong> ${player.joined}</p>
+                `;
+                playersList.appendChild(playerCard);
+            });
+        }
+
+        function loadPlayersForm() {
+            alert("Здесь будет форма управления игроками. В реальной реализации можно добавлять/удалять игроков.");
+        }
+
+        // ===== УПРАВЛЕНИЕ НОВОСТЯМИ =====
+        let news = [
+            {
+                title: "Открытие сервера!",
+                content: "Мы рады объявить об официальном открытии сервера SIGMOGRAD! Присоединяйтесь к нашему сообществу.",
+                date: "15.01.2024",
+                image: "https://i.imgur.com/7R6m9Qa.png"
+            }
+        ];
+
+        function loadNews() {
+            const newsList = document.getElementById('news-list');
+            newsList.innerHTML = '';
+            
+            news.forEach((item, index) => {
+                const newsCard = document.createElement('div');
+                newsCard.className = 'news-card';
+                
+                let mediaContent = '';
+                if (item.image) {
+                    mediaContent = `<img src="${item.image}" alt="${item.title}" class="news-image" onerror="this.style.display='none'">`;
+                } else if (item.video) {
+                    mediaContent = `<div class="news-video">Видео: ${item.video}</div>`;
+                }
+                
+                newsCard.innerHTML = `
+                    ${mediaContent}
+                    <div class="news-content">
+                        <div class="news-date">${item.date}</div>
+                        <h3>${item.title}</h3>
+                        <p>${item.content}</p>
+                    </div>
+                `;
+                newsList.appendChild(newsCard);
+            });
+        }
+
+        function addNews() {
+            const title = document.getElementById('news-title').value;
+            const content = document.getElementById('news-content').value;
+            const image = document.getElementById('news-image').value;
+            const video = document.getElementById('news-video').value;
+            
+            if (!title || !content) {
+                alert("Заполните заголовок и текст новости!");
+                return;
+            }
+            
+            const newNews = {
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString(),
+                image: image || '',
+                video: video || ''
+            };
+            
+            news.unshift(newNews); // Добавляем в начало массива
+            localStorage.setItem('serverNews', JSON.stringify(news));
+            
+            document.getElementById('news-form').reset();
+            loadNews();
+            
+            alert("Новость успешно опубликована!");
+        }
+
+        // ===== ЗАГРУЗКА МОДОВ =====
         function openModsModal() {
             document.getElementById('modsModal').style.display = 'block';
         }
@@ -827,35 +1184,15 @@
             document.getElementById('modsModal').style.display = 'none';
         }
 
-        // Закрытие модального окна при клике вне его
-        window.onclick = function(event) {
-            const modal = document.getElementById('modsModal');
-            if (event.target == modal) {
-                closeModsModal();
-            }
-        }
-
-        // Функция для скачивания отдельного мода
         function downloadMod(modName, modUrl) {
-            // Открываем ссылку в новом окне
             window.open(modUrl, '_blank');
-            
-            // Показываем уведомление
-            alert(`Вы будете перенаправлены на страницу загрузки ${modName}. Пожалуйста, скачайте последнюю версию, совместимую с Minecraft 1.20.4.`);
+            alert(`Вы будете перенаправлены на страницу загрузки ${modName}`);
         }
 
-        // Функция для скачивания всех модов (архив)
         function downloadAllMods() {
-            // В реальном проекте здесь должна быть ссылка на ZIP-архив со всеми модами
-            alert('В реальной реализации здесь будет скачиваться ZIP-архив со всеми необходимыми модами. В демонстрационных целях мы показываем это сообщение.');
-            
-            // Эмуляция скачивания (в реальном проекте замените на реальную ссылку)
-            const link = document.createElement('a');
-            link.href = '#'; // Замените на реальный URL архива
-            link.download = 'SIGMOGRAD_Mods_Pack.zip';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // В реальном проекте - ссылка на ZIP-архив
+            alert('Скачивание архива со всеми модами...');
+            // window.location.href = 'SIGMOGRAD_Mods_Pack.zip';
         }
 
         // Массивы для хранения данных
@@ -865,7 +1202,7 @@
         // Данные для голосования
         let electionData = {
             candidate1: { votes: 0, name: "M1cyy_1337" },
-            candidate2: { votes: 0, name: "Елена Прекрасная" },
+            candidate2: { votes: 0, name: "Макс" },
             totalVotes: 0,
             votedPlayers: []
         };
@@ -962,24 +1299,6 @@
             // Обновляем общее количество голосов
             document.getElementById('total-votes').textContent = electionData.totalVotes;
         }
-
-        // Загрузка сохраненных данных при загрузке страницы
-        window.addEventListener('load', function() {
-            loadElectionData();
-
-            // Загрузка данных о торговле и заказах
-            const savedTrades = localStorage.getItem('trades');
-            if (savedTrades) {
-                trades = JSON.parse(savedTrades);
-                updateTradeList();
-            }
-
-            const savedOrders = localStorage.getItem('orders');
-            if (savedOrders) {
-                orders = JSON.parse(savedOrders);
-                updateOrderList();
-            }
-        });
 
         // Функция добавления объявления
         function addTrade() {
@@ -1120,6 +1439,61 @@
             orders.splice(index, 1);
             localStorage.setItem('orders', JSON.stringify(orders));
             updateOrderList();
+        }
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        window.addEventListener('load', function() {
+            // Загрузка сохраненных данных
+            const savedStatus = localStorage.getItem('worldStatus') || 'peace';
+            const savedDescription = localStorage.getItem('statusDescription') || 'На сервере царит мир и спокойствие.';
+            
+            setWorldStatus(savedStatus);
+            document.getElementById('status-description').textContent = savedDescription;
+            
+            // Загрузка игроков и новостей
+            loadPlayersList();
+            loadNews();
+            
+            // Загрузка других данных...
+            const savedNews = localStorage.getItem('serverNews');
+            if (savedNews) {
+                news = JSON.parse(savedNews);
+                loadNews();
+            }
+            
+            const savedPopulation = localStorage.getItem('population');
+            if (savedPopulation) {
+                document.getElementById('total-population').value = savedPopulation;
+            }
+            
+            const savedOnline = localStorage.getItem('onlinePlayers');
+            if (savedOnline) {
+                document.getElementById('online-players').value = savedOnline;
+            }
+            
+            // Загрузка данных голосования
+            loadElectionData();
+
+            // Загрузка данных о торговле и заказах
+            const savedTrades = localStorage.getItem('trades');
+            if (savedTrades) {
+                trades = JSON.parse(savedTrades);
+                updateTradeList();
+            }
+
+            const savedOrders = localStorage.getItem('orders');
+            if (savedOrders) {
+                orders = JSON.parse(savedOrders);
+                updateOrderList();
+            }
+        });
+
+        // Закрытие модального окна при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('modsModal');
+            if (event.target == modal) {
+                closeModsModal();
+            }
         }
     </script>
 </body>
